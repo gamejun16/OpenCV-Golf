@@ -16,12 +16,6 @@ OpenCV와 Unity로 구현한 골프 시뮬레이션 게임
 
 4. 전달된 데이터를 토대로 시뮬레이션 진행
 
-# Ingame
+# YoutubeLink
 
-![ready](https://user-images.githubusercontent.com/24224903/79639344-4f2bce00-81c6-11ea-93de-96e339f0ba7b.gif)
-
-공 정지 확인 및 타격 준비
-
-![hit](https://user-images.githubusercontent.com/24224903/79639347-5652dc00-81c6-11ea-83d5-f8171ca1a648.gif)
-
-공 추적 및 시뮬레이션 진행
+[![VIDEO](https://img.youtube.com/vi/Il-_TnemJFk/0.jpg)](https://www.youtube.com/watch?v=Il-_TnemJFk?t=0s)

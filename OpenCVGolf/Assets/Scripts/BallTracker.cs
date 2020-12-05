@@ -133,10 +133,11 @@ public class BallTracker : MonoBehaviour
         //thread_2 = new Thread(new ThreadStart(ThreadTracking_2));
 
         thread = new Thread(ThreadTracking);
-       // thread_2 = new Thread(ThreadTracking_2);
+        thread_2 = new Thread(ThreadTracking_2);
         threadIsOn = true; //스레드 중지를 위한 플래그?
+
         thread.Start();
-       // thread_2.Start();
+        thread_2.Start();
         Debug.Log("(2) thread start");
     }
     
@@ -233,6 +234,8 @@ public class BallTracker : MonoBehaviour
         return;
     }
 }
+
+#region history
 
 // 20200102 Backup beforeTryThread
 /*
@@ -374,3 +377,5 @@ public class OpenCVTestScript : MonoBehaviour
 }
 
     */
+#endregion
+

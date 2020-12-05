@@ -1,4 +1,4 @@
 ﻿  OpenCVDLL.cpp
 dllmain.obj : warning LNK4075: '/EDITANDCONTINUE'이(가) '/INCREMENTAL:NO' 사양으로 인해 무시됩니다.
-     C:\Users\푸딩PREDATOR\Desktop\계명대진민준\drive-download-20200131T061613Z-001\OpenCVDLL_200131\x64\Debug\OpenCVDLL.lib 라이브러리 및 C:\Users\푸딩PREDATOR\Desktop\계명대진민준\drive-download-20200131T061613Z-001\OpenCVDLL_200131\x64\Debug\OpenCVDLL.exp 개체를 생성하고 있습니다.
-  OpenCVDLL.vcxproj -> C:\Users\푸딩PREDATOR\Desktop\계명대진민준\drive-download-20200131T061613Z-001\OpenCVDLL_200131\x64\Debug\OpenCVDLL.dll
+     C:\Users\jin\Desktop\destroy\OpenCV-Golf\x64\Debug\OpenCVDLL.lib 라이브러리 및 C:\Users\jin\Desktop\destroy\OpenCV-Golf\x64\Debug\OpenCVDLL.exp 개체를 생성하고 있습니다.
+  OpenCVDLL.vcxproj -> C:\Users\jin\Desktop\destroy\OpenCV-Golf\x64\Debug\OpenCVDLL.dll

@@ -41,16 +41,11 @@ public class ProcessController : MonoBehaviour
     /// 공이 완전히 '정지'한 상황에 대해 각 축으로의 미세한 흔들림을 허용하는 범위
     /// X cm 의 오차 허용
     //  OpenCV 내에서 흔들림이 보정(허용)된 값이 전달됨. 따라서 오차의 범위를 또 설정할 필요 x
-    //  [SerializeField]
     float errorRange = 0f;
 
     [SerializeField]
     Start2EndPointSaver[] start2EndPointSaver;
-
-    //[SerializeField]
-    //Transform[] StartBallPosition; // 각 홀의 시작 지점을 저장
-    //[SerializeField]
-    //Transform[] FinishPoint; // 도착 지점
+    
     int curHall; // 현재 진행중인 홀
 
     float flyingDistance;
@@ -62,7 +57,6 @@ public class ProcessController : MonoBehaviour
     Vector3 startPos; // start position of ball
     Vector3 hitStartPos; // first frame position right after hit the ball
 
-
     // 프레임을 비교해 공의 타격 순간 운동량을 계산
     Vector3 beforePos;
     int beforeTime;
@@ -72,10 +66,7 @@ public class ProcessController : MonoBehaviour
     Vector3 beforeHitPosition;
 
     float timer;
-
-    /// 0 -> PROCESS.READY 첫 번째 프레임 위치 정보 저장 -> 1
-    /// 1 -> OpenCV 내 공 위치 정보 이동 대기 -> 이동 확인 -> 2
-    /// 2 -> PROCESS.READY 두 번째 프레임 위치 정보 저장 -> 0
+    
     // 0 -> PROCESS.READY 진입 후 위치에 변화를 보이는 첫 프레임 대기 -> 이동 확인 -> 1
     // 1 -> 위치 정보 저장 -> 2
     // 2 -> PROCESS.READY 진입 후 위치에 변화를 보이는 두 번째 프레임 대기 -> 이동 확인 -> 3
@@ -106,7 +97,6 @@ public class ProcessController : MonoBehaviour
         WAIT, READY, HITTED, NOTFINISH, FINISH, FALLED, 
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         curHall = 0;
@@ -114,7 +104,7 @@ public class ProcessController : MonoBehaviour
         process = 0;
         timer = 0f;
         beforeTime = 0;
-        //BALL.transform.position = StartBallPosition[curHall].position;
+
         BALL.transform.position = start2EndPointSaver[curHall].StartPoint.position;
         Camera.main.transform.parent.position = BALL.transform.position;
 
@@ -126,16 +116,10 @@ public class ProcessController : MonoBehaviour
         logPrinter.setLeftDistance(BALL.transform.position, start2EndPointSaver[curHall].FinishPointAxis.position);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //ballTracker.cvCallFlag = true;
-        //ballTracker.cvCallFlag_2 = true;
-        //Camera.main.transform.parent.LookAt(FinishPoint[curHall].position);
         Camera.main.transform.parent.LookAt(start2EndPointSaver[curHall].FinishPointAxis);
-
         
-
         if (process == (int)PROCESS.WAIT && ballTracker.left == 0)
         {
             Debug.Log("공이 검출되지 않음");
@@ -144,16 +128,14 @@ public class ProcessController : MonoBehaviour
         {
             timer += Time.deltaTime;
         }
-
-
+        
         // 0~1 process 까지는 영상 프레임에 맞춰서 동작
         // 2~ 부터는 유니티 Update() 루프에 맞춰서 동작
-        if (process >= (int)PROCESS.HITTED || (ballTracker.cvCallFlag))// && ballTracker.cvCallFlag_2))//|| ballTracker.cvCallFlag_front)
+        if (process >= (int)PROCESS.HITTED || (ballTracker.cvCallFlag))
         {
 
-            // 두 개의 캠이 모두 갱신되었다면
-            if (ballTracker.cvCallFlag )//&& ballTracker.cvCallFlag_2)
-                //if (ballTracker.cvCallFlag_2)
+            // 캠이 갱신되었다면
+            if (ballTracker.cvCallFlag)
             {
                 // Ready 상태에서 , 4 장의 프레임을 검사.
                 if(process == (int)PROCESS.READY && (secondFrameFlag == 0 || secondFrameFlag == 2 || secondFrameFlag == 4 || secondFrameFlag == 6 || secondFrameFlag == 8))
@@ -161,13 +143,11 @@ public class ProcessController : MonoBehaviour
                     secondFrameFlag += 1; // 위치정보가 갱신되었으므로 읽어들이면 됨을 전달
                 }
                 Debug.Log("갱신 성공");
-                //ghostBallController.move(ballTracker.left + (int)(ballTracker.width * 0.5f), ballTracker.height + (int)(ballTracker.width * 0.5f), ballTracker.top + (int)(ballTracker.width * 0.5f));
-                //ghostBallController.move(ballTracker.left, ballTracker.height, ballTracker.top); // (좌우, 상하, 앞뒤)
+                
                 ghostBallController.move(ballTracker.top, ballTracker.height, ballTracker.left); // (좌우, 상하, 앞뒤)
 
                 ballTracker.cvCallFlag = false;
                 ballTracker.cvCallFlag_2 = false;
-                //ballTracker.count++; // 1frame
             }
 
             switch (process)
@@ -200,9 +180,7 @@ public class ProcessController : MonoBehaviour
                     break;
 
                 case (int)PROCESS.READY: // 준비 완료 - 타격 대기
-
-    
-
+                    
                     // 타격이 이루어진 순간 공 위치의 급격한 변화를 검출
                     if (secondFrameFlag == 1) // 네 장의 프레임을 검사하기위한 조건 (1/5)
                     {
@@ -230,7 +208,6 @@ public class ProcessController : MonoBehaviour
 
 
                             beforeTime = ballTracker.clock;
-                            //Debug.Log("beforeTime >> " + ballTracker.clock);
 
                             // 한 프레임만 진행되고 공이 검출되고 있음에도 추가적인 움직임이 없는 경우를 확인하기위한 장치
                             timer = 0f;
@@ -254,6 +231,7 @@ public class ProcessController : MonoBehaviour
                                 process = (int)PROCESS.WAIT;
                                 break;
                             }
+
                             // 공이 사라져 너무 큰 값이 잡힌 경우 OpenCV에서 left에 0을 반환한다
                             // 즉. 타격한 공이 카메라 밖으로 사라진 경우를 의미한다
                             // 바로 타격을 진행하고 다음 프로세스로 진행한다
@@ -269,27 +247,19 @@ public class ProcessController : MonoBehaviour
                                     // = 방향만 체크하고 크기를 확인하지 못한 경우
                                     // 한 번 검출 된 타격 방향만 확인, 해당 방향으로 미리 설정한 최대 출력으로 타격을 진행한다
                                     hit = Vector3.Normalize(ghostBallController.transform.position - startPos) * 20f; // 임의의 세기로 출력
-
-                                   
                                 }
                                 
-                                // secondFrameFlag == 5, 7, 9
-                                else // if (secondFrameFlag == 5 || secondFrameFlag == 7 || secondFrameFlag == 9)
+                                else
                                 {
                                     afterPos = ghostBallController.transform.position;
-
-
+                                    
                                     Debug.Log("secondFrameFlag >> " + secondFrameFlag);
                                     
                                     hit = (afterPos - hitStartPos) * (1000f / (ballTracker.clock - beforeTime));
-                                   
                                 }
                                 // 타격 직전 공의 좌표 저장(날아건 거리 계산용)
                                 beforeHitPosition = BALL.transform.position;
-
-                                // [임시] 높이 값 임의로 셋팅)
-
-
+                                
                                 // 검출된 세기로 공 타격
                                 // 타격 직전, 경사에서 정지되어있는 공의 마찰 정도를 초기화
                                 ballController.initDrag();
@@ -299,9 +269,7 @@ public class ProcessController : MonoBehaviour
                                 if (hit.magnitude > 5)
                                     hit.y = 3f;
 
-                                //BALL.GetComponent<Rigidbody>().AddRelativeForce(hit * 0.25f * 0.7f, ForceMode.Impulse);
                                 BALL.GetComponent<Rigidbody>().AddRelativeForce(hit * 0.2f, ForceMode.Impulse);
-
                                 scoreRecorder.addHitCount(); // 1타 기록
 
                                 // 초기화 및 프로세스 진행

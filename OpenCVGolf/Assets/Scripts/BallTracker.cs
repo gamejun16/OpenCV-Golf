@@ -15,11 +15,10 @@ public class BallTracker : MonoBehaviour
     [SerializeField]
     GhostBallController ghostBallController;
 
-    [DllImport("OpenCVDLL")]
+    [DllImport("OpenCVDLL")] // 상단 캠. x, z 축 정보 추출
     private static extern bool cv_Tracking(ref int _left, ref int _width, ref int _top, ref bool cvCallFlag, ref int clock, ref int count, bool isReadyDone = false);
 
-    // 전면 캠 스레드
-    [DllImport("OpenCVDLL")]
+    [DllImport("OpenCVDLL")] // 전면 캠. y 축 정보 추출
     private static extern bool cv_Tracking_2(ref int _height, ref bool cvCallFlag_2, ref int count, bool isReadyDone = false);
 
     [DllImport("OpenCVDLL")]
@@ -62,8 +61,6 @@ public class BallTracker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //cvCallFlag = false;
-        //cvCallFlag_2 = false;
         timer = 0f;
         count = 0;
         fps = 0;
@@ -87,19 +84,6 @@ public class BallTracker : MonoBehaviour
 
     private void Update()
     {
-        //timer += Time.deltaTime;
-
-        //if(timer > 1f)
-        //{
-        //   // fps = 0;
-        //    fps = count;
-        //    count = 0;
-        //    exposure_t.text = "fps >> " + fps;
-        //    timer = 0f;
-        //}
-
-        
-
         left_t.text = "leftPos >> " + left;
         top_t.text = "topPos >> " + top;
         width_t.text = "width >> " + width;
@@ -109,7 +93,6 @@ public class BallTracker : MonoBehaviour
     // 생명 주기. 프로그램이 종료되는 시점에 호출. 에디터 동작X
     private void OnApplicationQuit()
     {
-        //thread.Abort(); // 스레드 종료. 원활한 종료가 이루어지지 않을 수 있음?
         Debug.Log("[QUIT IS CALL]");
         TrackingOff();
     }
@@ -129,9 +112,6 @@ public class BallTracker : MonoBehaviour
     // 트래킹(thread) 시작
     public void TrackingStart(int targetColor = 4)
     {
-        //thread = new Thread(new ThreadStart(ThreadTracking));
-        //thread_2 = new Thread(new ThreadStart(ThreadTracking_2));
-
         thread = new Thread(ThreadTracking);
         thread_2 = new Thread(ThreadTracking_2);
         threadIsOn = true; //스레드 중지를 위한 플래그?
@@ -156,7 +136,6 @@ public class BallTracker : MonoBehaviour
         Debug.Log("(4) cam off");
 
         // 스레드가 완전히 정지할 때까지 대기
-
         if (thread != null)
         {
             thread.Interrupt();
@@ -168,26 +147,18 @@ public class BallTracker : MonoBehaviour
             thread_2 = null;
         }
 
-        //thread.Join();
-        //thread_2.Join();
-
         Debug.Log("(5) thread off");
 
         // 스레드 종료 완료?
         
-
         return true;
     }
 
     void ThreadTracking()
     {
-        //if(!cv_Tracking(ref left, ref width, ref top, ref cvCallFlag, ref count))
-        //    Debug.Log("cam error");
         while (threadIsOn)
         {
-            //cvCallFlag_2 = true;
             bool tmp = cv_Tracking(ref left, ref width, ref top, ref cvCallFlag, ref clock, ref count, (ProcessController.process == (int)ProcessController.PROCESS.WAIT ? false : true));
-            //bool tmp = cv_Tracking(ref left, ref width, ref top, ref cvCallFlag, ref clock, ref count, true);
             if (!tmp)
             {
                 Debug.Log("Top Cam Error");  
@@ -196,11 +167,7 @@ public class BallTracker : MonoBehaviour
                 return;
             }
             else
-            {
-                //Debug.Log("count >>> " + count);
-                            } 
-
-            //Thread.Sleep(100);
+            { } 
         }
         Debug.Log("(3) thread Top loop is done");
         return;
@@ -208,8 +175,6 @@ public class BallTracker : MonoBehaviour
 
     void ThreadTracking_2()
     {
-        //if (!cv_Tracking_2(ref height, ref cvCallFlag_2, ref count))
-        //    Debug.Log("cam error") ;
         while (threadIsOn)
         {
             bool tmp = cv_Tracking_2(ref height, ref cvCallFlag_2, ref count, (ProcessController.process == (int)ProcessController.PROCESS.WAIT ? false : true));
@@ -222,13 +187,8 @@ public class BallTracker : MonoBehaviour
 
             }
             else
-            {
-
-            }
+            { }
         }
-
-        //Thread.Sleep(100);
-
         Debug.Log("(3) thread Front loop is done");
         
         return;
